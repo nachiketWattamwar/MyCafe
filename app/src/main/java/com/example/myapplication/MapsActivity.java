@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -34,11 +35,19 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.navigation.NavigationView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -55,6 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleApiClient mGoogleApiClient;
     private Marker currentUserLocationMarker,cafes;
     private Double lat,lng;
+    private JSONArray jsonArray = null;
     private static final int request_user_location_code = 99;
     public static final String TAG = MapsActivity.class.getSimpleName();
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -64,6 +74,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Marker mCurrLocationMarker;
     FusedLocationProviderClient mFusedLocationClient;
     String queryCafe;
+    private TreeMap<String, String> placesMapOfCafes = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -285,7 +297,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         googlePlaceUrl.append("&radius=10000");
         googlePlaceUrl.append("&type="+cafe);
         googlePlaceUrl.append("&sensor=true");
-        googlePlaceUrl.append("&key="+"AIzaSyCuQTVW_NosBnX0DYhOcH2ZgLsCtD93wgs");
+        googlePlaceUrl.append("&key="+"insert key here");
 
         return googlePlaceUrl.toString();
     }
@@ -306,7 +318,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //
 //    }
 
+    public void seeDetailsList(View view){
+        Log.d("Demo","inside details ");
+        Intent myIntent = new Intent(this, DetailsCafe.class);
+        Log.d("Demo placesMapOfCafe", String.valueOf(placesMapOfCafes));
+        myIntent.putExtra("nameAndRating",placesMapOfCafes);
+        startActivity(myIntent);
+    }
 
+    @SuppressLint("LongLogTag")
     public void searchNearByNew(View view){
         Log.d("inside image button","tests");
         Log.d("Demo",String.valueOf(lat));
@@ -319,18 +339,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         dataTransfer[1] = url;
 
         Log.d("data", String.valueOf(dataTransfer));
-
         GetNearByPlaces getNearByPlaces = new GetNearByPlaces();
-        getNearByPlaces.execute(dataTransfer);
+        try {
+            String s = getNearByPlaces.execute(dataTransfer).get();
+            //Log.d("Demo nearby in main activity",s);
+            JSONObject allNearbyDataInJSON = new JSONObject(s);
+            jsonArray = allNearbyDataInJSON.getJSONArray("results");
+            Log.d("Demo all nearby in results ", String.valueOf(jsonArray));
+
+            placesMapOfCafes = new TreeMap<String,String>();
+            for(int i=0;i<jsonArray.length();i++){
+               JSONObject obj = jsonArray.getJSONObject(i);
+               String rating = obj.optString("rating");
+               String name = obj.optString("name");
+               placesMapOfCafes.put(name,rating);
+            }
+
+            Log.d("Demo before send", String.valueOf(placesMapOfCafes));
+
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @SuppressLint("LongLogTag")
     public void searchCafe(){
-
         final String cafeName = queryCafe;
 
-        //Log.d("=======================cafename",cafeName);
-        //System.out.println("======="+cafeName);
         Geocoder geocoder = new Geocoder(this);
         List<Address> addressList = null;
         MarkerOptions mo = new MarkerOptions();
@@ -338,10 +378,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         addressList = geocoder.getFromLocationName(cafeName,3);
         Log.d("addresslist",String.valueOf(addressList));
-//        while(addresses.size()==0){
-//            System.out.println("inside while");
-//            addresses = geocoder.getFromLocationName(cafeName,3);
-//        }
+
             mMap.clear();
             for (Address a : addressList){
                 Log.d("DemoLog loop called, cafe:= ", String.valueOf(a));
@@ -399,8 +436,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
 
-
-
     }
 
     @Override
@@ -412,4 +447,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
 }

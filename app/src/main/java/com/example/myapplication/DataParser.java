@@ -17,6 +17,7 @@ public class DataParser {
         String latitude ="";
         String longitude ="";
         String reference ="";
+        int rating = 0;
 
         try {
             if(!googlePlaceJSON.isNull("name")){
@@ -30,12 +31,14 @@ public class DataParser {
             latitude = googlePlaceJSON.getJSONObject("geometry").getJSONObject("location").getString("lat");
             longitude = googlePlaceJSON.getJSONObject("geometry").getJSONObject("location").getString("lng");
             reference = googlePlaceJSON.getString("reference");
+            rating = googlePlaceJSON.getInt("rating");
 
             googlePlaceMap.put("place_name",NameOfPlace);
             googlePlaceMap.put("vicinity",vicinity);
             googlePlaceMap.put("lat",latitude);
             googlePlaceMap.put("lng",longitude);
             googlePlaceMap.put("reference",reference);
+            googlePlaceMap.put("rating", String.valueOf(rating));
 
 
         } catch (JSONException e) {
@@ -43,7 +46,6 @@ public class DataParser {
         }
 
         return googlePlaceMap;
-
 
     }
 

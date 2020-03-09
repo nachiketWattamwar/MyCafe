@@ -20,6 +20,7 @@
             android:layout_alignParentTop="true"
             android:background="#44AAD8"
             app:title="Map View"
+            app:headerLayout="@layout/header"
             app:titleTextColor="#BE560F12">
 
         </androidx.appcompat.widget.Toolbar>
@@ -46,14 +47,24 @@
 
         <ImageButton
             android:id="@+id/imageButton"
-            android:layout_width="160dp"
-            android:layout_height="137dp"
+            android:layout_width="116dp"
+            android:layout_height="95dp"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="30dp"
             android:layout_marginBottom="-1dp"
             android:onClick="searchNearByNew"
             app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
 
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="19dp"
+            android:layout_marginLeft="300dp"
+            android:onClick="seeDetailsList"
+            >
+
+        </Button>
     </RelativeLayout>
 
 
