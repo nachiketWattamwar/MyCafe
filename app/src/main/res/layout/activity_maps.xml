@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
+
+
+
 <androidx.drawerlayout.widget.DrawerLayout
     android:id="@+id/drawer"
     android:layout_height="match_parent"
@@ -8,10 +12,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:fitsSystemWindows="true">
 
+
     <!-- Main content-->
     <RelativeLayout
         android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:id="@+id/relativeLayoutSnackBar"
+        >
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -47,11 +54,13 @@
 
         <ImageButton
             android:id="@+id/imageButton"
-            android:layout_width="116dp"
-            android:layout_height="95dp"
+            android:layout_width="61dp"
+            android:layout_height="60dp"
+
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="30dp"
-            android:layout_marginBottom="-1dp"
+            android:layout_marginBottom="65dp"
+            android:background="@mipmap/ic_launcher_round"
             android:onClick="searchNearByNew"
             app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
 
@@ -59,10 +68,13 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="19dp"
+            android:layout_marginStart="206dp"
             android:layout_marginLeft="300dp"
+            android:layout_marginBottom="72dp"
+            android:layout_toEndOf="@+id/imageButton"
+            android:background="@android:color/background_light"
             android:onClick="seeDetailsList"
-            >
+            android:text="Cafe">
 
         </Button>
     </RelativeLayout>
@@ -80,4 +92,6 @@
 
 <!--    </com.google.android.material.navigation.NavigationView>-->
 
+
 </androidx.drawerlayout.widget.DrawerLayout>
+
